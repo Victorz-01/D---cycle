@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D-Cycle — Your Cycle, Your Insight</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #fff0f5, #fce4ec, #f8bbd0);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* ===== LOGO / HEADER ===== */
+    .logo {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .logo h1 {
+      font-size: 32px;
+      color: #c2185b;
+      letter-spacing: 2px;
+    }
+
+    .logo h1 span {
+      color: #f06292;
+    }
+
+    .logo p {
+      font-size: 13px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(194, 24, 91, 0.08);
+      border: 1px solid rgba(194, 24, 91, 0.06);
+    }
+
+    .card h2 {
+      font-size: 16px;
+      color: #c2185b;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== FORM ELEMENTS ===== */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #f8bbd0;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: border 0.3s;
+      margin-bottom: 16px;
+    }
+
+    input[type="date"]:focus {
+      border-color: #c2185b;
+    }
+
+    /* ===== SLIDER ===== */
+    .slider-group {
+      margin-bottom: 18px;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .slider-value {
+      background: #fce4ec;
+      color: #c2185b;
+      font-weight: bold;
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #f8bbd0;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #c2185b;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(194,24,91,0.3);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #c2185b;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ===== GOAL SELECTOR ===== */
+    .goal-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .goal-btn {
+      flex: 1;
+      padding: 14px 8px;
+      border: 2px solid #f8bbd0;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+      font-size: 12px;
+      font-weight: 600;
+      color: #777;
+    }
+
+    .goal-btn:hover {
+      border-color: #f06292;
+      background: #fff5f8;
+    }
+
+    .goal-btn.active {
+      border-color: #c2185b;
+      background: #fce4ec;
+      color: #c2185b;
+    }
+
+    .goal-btn .icon {
+      font-size: 28px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* ===== MAIN BUTTON ===== */
+    .main-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #c2185b, #e91e63);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(194, 24, 91, 0.3);
+    }
+
+    .main-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(194, 24, 91, 0.4);
+    }
+
+    .main-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ===== PAGE TRANSITIONS ===== */
+    .page {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== STATUS RING ===== */
+    .ring-container {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 20px;
+    }
+
+    .status-ring {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+
+    .status-ring .phase-emoji {
+      font-size: 36px;
+      margin-bottom: 4px;
+    }
+
+    .status-ring .day-number {
+      font-size: 38px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .status-ring .day-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+      margin-top: 2px;
+    }
+
+    .status-ring .phase-name {
+      font-size: 13px;
+      color: rgba(255,255,255,0.95);
+      font-weight: 600;
+      margin-top: 4px;
+      background: rgba(255,255,255,0.2);
+      padding: 2px 12px;
+      border-radius: 10px;
+    }
+
+    .ring-period {
+      background: linear-gradient(135deg, #e53935, #ef5350);
+    }
+
+    .ring-fertile {
+      background: linear-gradient(135deg, #1565c0, #42a5f5);
+    }
+
+    .ring-ovulation {
+      background: linear-gradient(135deg, #6a1b9a, #ab47bc);
+    }
+
+    .ring-luteal {
+      background: linear-gradient(135deg, #2e7d32, #66bb6a);
+    }
+
+    .ring-follicular {
+      background: linear-gradient(135deg, #f57c00, #ffb74d);
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+      50% { box-shadow: 0 8px 40px rgba(0,0,0,0.2); }
+    }
+
+    .status-ring {
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    /* ===== TIMELINE BAR ===== */
+    .timeline-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: #eee;
+      margin: 16px 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+    /* ===== HERO CARD ===== */
+    .hero-card {
+      background: linear-gradient(135deg, #fce4ec, #fff);
+      border: 2px solid #f48fb1;
+      padding: 24px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .hero-card .hero-title {
+      font-size: 14px;
+      color: #c2185b;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .hero-card .hero-value {
+      font-size: 22px;
+      font-weight: bold;
+      color: #880e4f;
+    }
+
+    .hero-card .hero-sub {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* ===== INFO GRID ===== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .info-item {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid #fce4ec;
+    }
+
+    .info-item .info-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .info-item .info-label {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .info-item .info-value {
+      font-size: 15px;
+      font-weight: bold;
+      color: #c2185b;
+    }
+
+    /* ===== LIFESTYLE CARD ===== */
+    .lifestyle-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid #fce4ec;
+    }
+
+    .lifestyle-card h3 {
+      font-size: 15px;
+      color: #c2185b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tip-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .tip-row .tip-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ===== BOTTOM BUTTONS ===== */
+    .bottom-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .bottom-actions button {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #f8bbd0;
+      background: white;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #c2185b;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .bottom-actions button:hover {
+      background: #fce4ec;
+    }
+
+    /* ===== DISCLAIMER ===== */
+    .disclaimer {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      font-weight: bold;
+      margin: 10px 0 30px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============ PAGE 1: SETUP ============ -->
+<div class="page active" id="page1">
+  <div class="container">
+    <div class="logo">
+      <h1>D - <span>Cycle</span></h1>
+      <p>Your Cycle. Your Insight.</p>
+    </div>
+
+    <!-- Date Picker -->
+    <div class="card">
+      <h2>📅 Your Last Period</h2>
+      <label>When did your last period start?</label>
+      <input type="date" id="lastPeriodDate">
+    </div>
+
+    <!-- Cycle Length -->
+    <div class="card">
+      <h2>🔄 Cycle Length</h2>
+      <div class="slider-group">
+        <div class="slider-label">
+          <label>How long is your cycle?</label>
+          <span class="slider-value" id="cycleLengthValue">28 days</span>
+        </div>
+        <input type="range" id="cycleLength" min="21" max="35" value="28"
+               oninput="document.getElementById('cycleLengthValue').textContent = this.value + ' days'">
+      </div>
+    </div>
+
+    <!-- Period Duration -->
+    <div class="card">
+      <h2>🩸 Period Duration</h2>
+      <div class="slider-group">
+        <div class="slider-label">
+          <label>How many days does your period last?</label>
+          <span class="slider-value" id="periodLengthValue">5 days</span>
+        </div>
+        <input type="range" id="periodLength" min="2" max="10" value="5"
+               oninput="document.getElementById('periodLengthValue').textContent = this.value + ' days'">
+      </div>
+    </div>
+
+    <!-- Goal Selector -->
+    <div class="card">
+      <h2>🎯 What's Your Goal?</h2>
+      <div class="goal-options">
+        <div class="goal-btn" onclick="selectGoal('conceive', this)">
+          <span class="icon">🤰</span>
+          Conceive
+        </div>
+        <div class="goal-btn" onclick="selectGoal('avoid', this)">
+          <span class="icon">🛡️</span>
+          Avoid Pregnancy
+        </div>
+        <div class="goal-btn active" onclick="selectGoal('track', this)">
+          <span class="icon">📊</span>
+          Track Period Only
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="main-btn" onclick="showInsights()">
+      ✨ Show My Insights
+    </button>
+
+    <p class="disclaimer">
+      Estimates only. Not medical advice. Consult a healthcare provider for medical concerns.
+    </p>
+  </div>
+</div>
+
+<!-- ============ PAGE 2: DASHBOARD ============ -->
+<div class="page" id="page2">
+  <div class="container">
+    <div class="logo">
+      <h1>D - <span>Cycle</span></h1>
+      <p id="dashboardSub">Your Cycle. Your Insight.</p>
+    </div>
+
+    <!-- Status Ring -->
+    <div class="card">
+      <div class="ring-container">
+        <div class="status-ring" id="statusRing">
+          <span class="phase-emoji" id="ringEmoji">🌸</span>
+          <span class="day-number" id="ringDay">1</span>
+          <span class="day-label">of your cycle</span>
+          <span class="phase-name" id="ringPhase">Phase</span>
+        </div>
+      </div>
+
+      <!-- Timeline Bar -->
+      <div class="timeline-bar">
+        <div class="timeline-fill" id="timelineFill"></div>
+      </div>
+      <div class="timeline-labels">
+        <span>Day 1</span>
+        <span id="timelineMid"></span>
+        <span id="timelineEnd"></span>
+      </div>
+    </div>
+
+    <!-- Hero Card -->
+    <div class="hero-card" id="heroCard">
+      <div class="hero-title" id="heroTitle">Loading...</div>
+      <div class="hero-value" id="heroValue">—</div>
+      <div class="hero-sub" id="heroSub"></div>
+    </div>
+
+    <!-- Info Grid -->
+    <div class="info-grid" id="infoGrid"></div>
+
+    <!-- Lifestyle Card -->
+    <div class="lifestyle-card" id="lifestyleCard"></div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-actions">
+      <button onclick="goBack()">⚙️ Edit Settings</button>
+    </div>
+
+    <p class="disclaimer">
+      Estimates only. Not medical advice.
+    </p>
+  </div>
+</div>
+
+<script>
+  // ========== STATE ==========
+  var selectedGoal = "track";
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Set default date to today
+  document.getElementById("lastPeriodDate").value = today.toISOString().slice(0, 10);
+
+  // Load saved data if exists
+  loadSaved();
+
+  // ========== GOAL SELECTOR ==========
+  function selectGoal(goal, el) {
+    selectedGoal = goal;
+    var btns = document.querySelectorAll(".goal-btn");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.remove("active");
+    }
+    el.classList.add("active");
+  }
+
+  // ========== SAVE / LOAD ==========
+  function saveToStorage(settings) {
+    localStorage.setItem("dcycle_settings", JSON.stringify(settings));
+  }
+
+  function loadSaved() {
+    try {
+      var raw = localStorage.getItem("dcycle_settings");
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (s.lastPeriodDate) document.getElementById("lastPeriodDate").value = s.lastPeriodDate;
+      if (s.cycleLength) {
+        document.getElementById("cycleLength").value = s.cycleLength;
+        document.getElementById("cycleLengthValue").textContent = s.cycleLength + " days";
+      }
+      if (s.periodLength) {
+        document.getElementById("periodLength").value = s.periodLength;
+        document.getElementById("periodLengthValue").textContent = s.periodLength + " days";
+      }
+      if (s.goal) {
+        selectedGoal = s.goal;
+        var btns = document.querySelectorAll(".goal-btn");
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].classList.remove("active");
+          if ((s.goal === "conceive" && i === 0) ||
+              (s.goal === "avoid" && i === 1) ||
+              (s.goal === "track" && i === 2)) {
+            btns[i].classList.add("active");
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  // ========== SHOW INSIGHTS ==========
+  function showInsights() {
+    var lastDate = document.getElementById("lastPeriodDate").value;
+    var cycleLen = parseInt(document.getElementById("cycleLength").value);
+    var periodLen = parseInt(document.getElementById("periodLength").value);
+
+    if (!lastDate) {
+      alert("Please select your last period start date.");
+      return;
+    }
+
+    var settings = {
+      lastPeriodDate: lastDate,
+      cycleLength: cycleLen,
+      periodLength: periodLen,
+      goal: selectedGoal
+    };
+    saveToStorage(settings);
+
+    var calc = calculate(lastDate, cycleLen, periodLen);
+    renderDashboard(calc, settings);
+
+    document.getElementById("page1").classList.remove("active");
+    document.getElementById("page2").classList.add("active");
+    window.scrollTo(0, 0);
+  }
+
+  // ========== GO BACK ==========
+  function goBack() {
+    document.getElementById("page2").classList.remove("active");
+    document.getElementById("page1").classList.add("active");
+    window.scrollTo(0, 0);
+  }
+
+  // ========== CALCULATE ==========
+  function calculate(lastDateStr, cycleLen, periodLen) {
+    var lastPeriodStart = new Date(lastDateStr + "T00:00:00");
+
+    var cycleStart = new Date(lastPeriodStart);
+    while (true) {
+      var nextCycle = new Date(cycleStart);
+      nextCycle.setDate(nextCycle.getDate() + cycleLen);
+      if (nextCycle > today) break;
+      cycleStart = nextCycle;
+    }
+
+    var diffMs = today - cycleStart;
+    var currentDay = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    if (currentDay < 1) currentDay = 1;
+    if (currentDay > cycleLen) currentDay = cycleLen;
+
+    var nextPeriodStart = new Date(cycleStart);
+    nextPeriodStart.setDate(nextPeriodStart.getDate() + cycleLen);
+    var daysToNextPeriod = Math.ceil((nextPeriodStart - today) / (1000 * 60 * 60 * 24));
+
+    var ovulationDay = cycleLen - 14;
+    if (ovulationDay < periodLen + 1) ovulationDay = periodLen + 1;
+
+    var fertileStart = ovulationDay - 5;
+    var fertileEnd = ovulationDay;
+    if (fertileStart < periodLen + 1) fertileStart = periodLen + 1;
+
+    var fertileStartDate = new Date(cycleStart);
+    fertileStartDate.setDate(fertileStartDate.getDate() + fertileStart - 1);
+    var fertileEndDate = new Date(cycleStart);
+    fertileEndDate.setDate(fertileEndDate.getDate() + fertileEnd - 1);
+    var ovulationDate = new Date(cycleStart);
+    ovulationDate.setDate(ovulationDate.getDate() + ovulationDay - 1);
+
+    var phase, phaseEmoji, ringClass;
+    if (currentDay <= periodLen) {
+      phase = "Menstrual Phase";
+      phaseEmoji = "🩸";
+      ringClass = "ring-period";
+    } else if (currentDay < fertileStart) {
+      phase = "Follicular Phase";
+      phaseEmoji = "🌱";
+      ringClass = "ring-follicular";
+    } else if (currentDay >= fertileStart && currentDay < ovulationDay) {
+      phase = "Fertile Window";
+      phaseEmoji = "💧";
+      ringClass = "ring-fertile";
+    } else if (currentDay === ovulationDay) {
+      phase = "Ovulation Day";
+      phaseEmoji = "🥚";
+      ringClass = "ring-ovulation";
+    } else {
+      phase = "Luteal Phase";
+      phaseEmoji = "🍂";
+      ringClass = "ring-luteal";
+    }
+
+    var periodEndDate = new Date(cycleStart);
+    periodEndDate.setDate(periodEndDate.getDate() + periodLen - 1);
+
+    return {
+      currentDay: currentDay,
+      cycleLen: cycleLen,
+      periodLen: periodLen,
+      phase: phase,
+      phaseEmoji: phaseEmoji,
+      ringClass: ringClass,
+      daysToNextPeriod: daysToNextPeriod,
+      nextPeriodStart: nextPeriodStart,
+      ovulationDay: ovulationDay,
+      ovulationDate: ovulationDate,
+      fertileStart: fertileStart,
+      fertileEnd: fertileEnd,
+      fertileStartDate: fertileStartDate,
+      fertileEndDate: fertileEndDate,
+      cycleStart: cycleStart,
+      periodEndDate: periodEndDate
+    };
+  }
+
+  // ========== RENDER DASHBOARD ==========
+  function renderDashboard(c, settings) {
+    var ring = document.getElementById("statusRing");
+    ring.className = "status-ring " + c.ringClass;
+    document.getElementById("ringEmoji").textContent = c.phaseEmoji;
+    document.getElementById("ringDay").textContent = "Day " + c.currentDay;
+    document.getElementById("ringPhase").textContent = c.phase;
+
+    var pct = Math.round((c.currentDay / c.cycleLen) * 100);
+    var fill = document.getElementById("timelineFill");
+    fill.style.width = pct + "%";
+
+    if (c.ringClass === "ring-period") fill.style.background = "linear-gradient(90deg, #e53935, #ef5350)";
+    else if (c.ringClass === "ring-fertile") fill.style.background = "linear-gradient(90deg, #1565c0, #42a5f5)";
+    else if (c.ringClass === "ring-ovulation") fill.style.background = "linear-gradient(90deg, #6a1b9a, #ab47bc)";
+    else if (c.ringClass === "ring-luteal") fill.style.background = "linear-gradient(90deg, #2e7d32, #66bb6a)";
+    else fill.style.background = "linear-gradient(90deg, #f57c00, #ffb74d)";
+
+    document.getElementById("timelineMid").textContent = "Ovulation ~Day " + c.ovulationDay;
+    document.getElementById("timelineEnd").textContent = "Day " + c.cycleLen;
+
+    var heroTitle = document.getElementById("heroTitle");
+    var heroValue = document.getElementById("heroValue");
+    var heroSub = document.getElementById("heroSub");
+    var heroCard = document.getElementById("heroCard");
+
+    if (selectedGoal === "conceive") {
+      heroTitle.textContent = "🤰 Best Days to Conceive";
+      heroValue.textContent = formatDate(c.fertileStartDate) + " — " + formatDate(c.fertileEndDate);
+      heroSub.textContent = "Peak day: " + formatDate(c.ovulationDate) + " (Ovulation)";
+      heroCard.style.borderColor = "#42a5f5";
+      heroCard.style.background = "linear-gradient(135deg, #e3f2fd, #fff)";
+    } else if (selectedGoal === "avoid") {
+      heroTitle.textContent = "🛡️ Caution Window — Use Protection";
+      var cautionStart = new Date(c.fertileStartDate);
+      cautionStart.setDate(cautionStart.getDate() - 1);
+      var cautionEnd = new Date(c.fertileEndDate);
+      cautionEnd.setDate(cautionEnd.getDate() + 1);
+      heroValue.textContent = formatDate(cautionStart) + " — " + formatDate(cautionEnd);
+      heroSub.textContent = "Higher risk of pregnancy during this window.";
+      heroCard.style.borderColor = "#ef5350";
+      heroCard.style.background = "linear-gradient(135deg, #ffebee, #fff)";
+    } else {
+      heroTitle.textContent = "📊 Period Countdown";
+      if (c.daysToNextPeriod <= 0) {
+        heroValue.textContent = "Your period may have started!";
+      } else if (c.daysToNextPeriod === 1) {
+        heroValue.textContent = "Tomorrow!";
+      } else {
+        heroValue.textContent = c.daysToNextPeriod + " days to go";
+      }
+      heroSub.textContent = "Next period expected: " + formatDate(c.nextPeriodStart);
+      heroCard.style.borderColor = "#f48fb1";
+      heroCard.style.background = "linear-gradient(135deg, #fce4ec, #fff)";
+    }
+
+    var gridHtml = '';
+    gridHtml += infoItem("📅", "Cycle Day", c.currentDay + " of " + c.cycleLen);
+    gridHtml += infoItem("🩸", "Period", c.currentDay <= c.periodLen
+      ? "Day " + c.currentDay + " of " + c.periodLen
+      : "Ended");
+    gridHtml += infoItem("🥚", "Ovulation", c.currentDay === c.ovulationDay
+      ? "Today!"
+      : c.currentDay < c.ovulationDay
+        ? "In " + (c.ovulationDay - c.currentDay) + " days"
+        : (c.ovulationDay + c.cycleLen - c.currentDay) + " days (next cycle)");
+    gridHtml += infoItem("🔄", "Next Period", c.daysToNextPeriod + " days");
+    document.getElementById("infoGrid").innerHTML = gridHtml;
+
+    renderLifestyle(c);
+  }
+
+  function infoItem(icon, label, value) {
+    return '<div class="info-item">' +
+      '<div class="info-icon">' + icon + '</div>' +
+      '<div class="info-label">' + label + '</div>' +
+      '<div class="info-value">' + value + '</div>' +
+      '</div>';
+  }
+
+  // ========== LIFESTYLE TIPS ==========
+  function renderLifestyle(c) {
+    var card = document.getElementById("lifestyleCard");
+    var title, body, food, exercise, selfcare, mood;
+
+    if (c.currentDay <= c.periodLen) {
+      title = "🩸 Menstrual Phase — Rest & Restore";
+      body = "Your body is shedding the uterine lining. Hormone levels are at their lowest. It's normal to feel tired.";
+      food = "🍫 Iron-rich foods (spinach, red meat, lentils), dark chocolate, warm soups, herbal teas.";
+      exercise = "🧘 Light yoga, gentle walks, stretching. Listen to your body — rest if needed.";
+      selfcare = "🛁 Warm baths, heating pads for cramps, extra sleep, journaling.";
+      mood = "💭 You may feel introspective or low energy — that's completely normal.";
+    } else if (c.currentDay < c.fertileStart) {
+      title = "🌱 Follicular Phase — Rise & Shine";
+      body = "Estrogen is rising. Your body is preparing a new egg. Energy and mood are climbing!";
+      food = "🥗 Fresh vegetables, lean protein, fermented foods (yogurt, kimchi), whole grains.";
+      exercise = "🏃 Great time for cardio, strength training, trying new workouts. Energy is high!";
+      selfcare = "✨ Your skin may glow — great time for social events and new projects.";
+      mood = "😊 Confidence and creativity are peaking. Use this energy!";
+    } else if (c.currentDay >= c.fertileStart && c.currentDay <= c.fertileEnd) {
+      title = "🥚 Ovulation Phase — Peak Energy";
+      body = "An egg is being released. Estrogen peaks. This is your most fertile time.";
+      food = "🐟 Anti-inflammatory foods: salmon, berries, leafy greens, nuts, lots of water.";
+      exercise = "💪 High-intensity workouts, running, dancing — your body can handle it!";
+      selfcare = "💃 You may feel most attractive and social. Great for date nights or big meetings.";
+      mood = "🔥 Libido and confidence are at their highest. Communication feels easier.";
+    } else {
+      title = "🍂 Luteal Phase — Slow & Steady";
+      body = "Progesterone rises. Your body is preparing for a possible pregnancy — or your next period. PMS may appear.";
+      food = "🍌 Complex carbs (sweet potato, oats), magnesium-rich foods (bananas, dark chocolate), reduce salt and caffeine.";
+      exercise = "🚶 Moderate walks, pilates, swimming. Reduce intensity as PMS approaches.";
+      selfcare = "😴 Prioritize sleep, stay hydrated, use calming essential oils (lavender).";
+      mood = "🌧️ You may feel irritable, bloated, or emotional. Be gentle with yourself — it passes.";
+    }
+
+    card.innerHTML =
+      '<h3>' + title + '</h3>' +
+      '<div class="tip-row"><span class="tip-icon">🫀</span><span>' + body + '</span></div>' +
+      '<div class="tip-row"><span class="tip-icon">🍽️</span><span><b>Food:</b> ' + food + '</span></div>' +
+      '<div class="tip-row"><span class="tip-icon">🏋️</span><span><b>Exercise:</b> ' + exercise + '</span></div>' +
+      '<div class="tip-row"><span class="tip-icon">🧖</span><span><b>Self-care:</b> ' + selfcare + '</span></div>' +
+      '<div class="tip-row"><span class="tip-icon">🧠</span><span><b>Mood:</b> ' + mood + '</span></div>';
+  }
+
+  // ========== FORMAT DATE ==========
+  function formatDate(d) {
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return months[d.getMonth()] + " " + d.getDate();
+  }
+</script>
+
+</body>
+</html>
